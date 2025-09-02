@@ -1,0 +1,122 @@
+drop table feed1 ;
+-- Create table
+CREATE TABLE feed1 (
+    col_1 INT,
+    col_2 VARCHAR(255),
+    col_3 VARCHAR(255),
+    col_4 VARCHAR(255),
+    col_5 VARCHAR(255),
+    col_6 VARCHAR(255),
+    col_7 VARCHAR(255),
+    col_8 VARCHAR(255),
+    col_9 VARCHAR(255),
+    col_10 VARCHAR(255)
+);
+
+-- Insert 10 random rows
+INSERT INTO feed1 (col_1, col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9, col_10)
+SELECT 
+    g.n,
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8),
+    substr(md5(random()::text), 1, 8)
+FROM generate_series(1,10) AS g(n);
+
+-- Duplicate one row (take the first row and insert again)
+INSERT INTO feed1
+SELECT *
+FROM feed1
+OFFSET 0 LIMIT 1;
+
+select * from feed1 ;
+------------------------------------------------------------------------------------------
+DROP TABLE IF EXISTS Feed2;
+
+CREATE TABLE Feed2 (
+    col_1 INT,
+    col_2 VARCHAR(255), col_3 VARCHAR(255), col_4 VARCHAR(255), col_5 VARCHAR(255),
+    col_6 VARCHAR(255), col_7 VARCHAR(255), col_8 VARCHAR(255), col_9 VARCHAR(255), col_10 VARCHAR(255),
+    col_11 VARCHAR(255), col_12 VARCHAR(255), col_13 VARCHAR(255), col_14 VARCHAR(255), col_15 VARCHAR(255)
+);
+
+-- Insert 15 rows with random values
+INSERT INTO Feed2 (col_1, col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9, col_10,
+                   col_11, col_12, col_13, col_14, col_15)
+SELECT
+    g.n,
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8),
+    SUBSTRING(MD5(RANDOM()::text), 1, 8)
+FROM generate_series(1, 15) g(n);
+
+-- Duplicate first 2 rows (like LIMIT 2 in MySQL)
+INSERT INTO Feed2
+SELECT * FROM Feed2
+WHERE col_1 IN (1, 2);
+
+SELECT * FROM FEED2
+------------------------------------------------------------------------------------------
+DROP TABLE IF EXISTS Feed3;
+
+CREATE TABLE Feed3 (
+    col_1 INT,
+    col_2 VARCHAR(255), col_3 VARCHAR(255), col_4 VARCHAR(255), col_5 VARCHAR(255),
+    col_6 VARCHAR(255), col_7 VARCHAR(255), col_8 VARCHAR(255), col_9 VARCHAR(255), col_10 VARCHAR(255),
+    col_11 VARCHAR(255), col_12 VARCHAR(255), col_13 VARCHAR(255), col_14 VARCHAR(255), col_15 VARCHAR(255),
+    col_16 VARCHAR(255), col_17 VARCHAR(255), col_18 VARCHAR(255), col_19 VARCHAR(255), col_20 VARCHAR(255)
+);
+
+-- Insert 20 rows with random values
+INSERT INTO Feed3 (col_1, col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9, col_10,
+                   col_11, col_12, col_13, col_14, col_15, col_16, col_17, col_18, col_19, col_20)
+SELECT
+    g.n,
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_2
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_3
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_4
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_5
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_6
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_7
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_8
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_9
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_10
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_11
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_12
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_13
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_14
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_15
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_16
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_17
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_18
+    SUBSTRING(MD5(RANDOM()::text), 1, 8), -- col_19
+    SUBSTRING(MD5(RANDOM()::text), 1, 8)  -- col_20
+FROM generate_series(1, 20) g(n);
+
+-- ✅ Duplicate first 2 rows, with NEW col_1 values
+INSERT INTO Feed3 (col_1, col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9, col_10,
+                   col_11, col_12, col_13, col_14, col_15, col_16, col_17, col_18, col_19, col_20)
+SELECT 
+    (SELECT MAX(col_1) FROM Feed3) + ROW_NUMBER() OVER(),
+    col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9, col_10,
+    col_11, col_12, col_13, col_14, col_15, col_16, col_17, col_18, col_19, col_20
+FROM Feed3
+WHERE col_1 IN (1, 2);
+SELECT * FROM FEED3
+------------------------------------------------------------------------------------------
