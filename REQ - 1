@@ -109,7 +109,7 @@ SELECT
     SUBSTRING(MD5(RANDOM()::text), 1, 8)  -- col_20
 FROM generate_series(1, 20) g(n);
 
--- ✅ Duplicate first 2 rows, with NEW col_1 values
+
 INSERT INTO Feed3 (col_1, col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9, col_10,
                    col_11, col_12, col_13, col_14, col_15, col_16, col_17, col_18, col_19, col_20)
 SELECT 
@@ -120,3 +120,4 @@ FROM Feed3
 WHERE col_1 IN (1, 2);
 SELECT * FROM FEED3
 ------------------------------------------------------------------------------------------
+
