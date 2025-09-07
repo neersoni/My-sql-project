@@ -47,4 +47,58 @@ FROM Feed3
 GROUP BY col_1, col_2, col_3, col_4, col_5, col_6, col_7, col_8, col_9, col_10,
     col_11, col_12, col_13, col_14, col_15, col_16, col_17, col_18, col_19, col_20
 HAVING COUNT(*) > 1;
+
 SELECT * FROM duplicates;
+
+--------------------------------------------------------------------------------------------------------------
+# sql query for output file
+
+--- Duplicates from feed1
+COPY (
+    SELECT 
+        'Feed1' AS table_name_source,
+        col_1, col_2, col_3, col_4, col_5,
+        col_6, col_7, col_8, col_9, col_10,
+        COUNT(*) AS dup_count
+    FROM feed1
+    GROUP BY col_1, col_2, col_3, col_4, col_5,
+             col_6, col_7, col_8, col_9, col_10
+    HAVING COUNT(*) > 1
+) TO '/tmp/duplicates_feed1.csv' WITH CSV HEADER;
+
+
+-- --  Duplicates from feed2
+COPY (
+    SELECT 
+        'Feed2' AS table_name_source,
+        col_1, col_2, col_3, col_4, col_5,
+        col_6, col_7, col_8, col_9, col_10,
+        col_11, col_12, col_13, col_14, col_15,
+        COUNT(*) AS dup_count
+    FROM feed2
+    GROUP BY col_1, col_2, col_3, col_4, col_5,
+             col_6, col_7, col_8, col_9, col_10,
+             col_11, col_12, col_13, col_14, col_15
+    HAVING COUNT(*) > 1
+) TO '/tmp/duplicates_feed2.csv' WITH CSV HEADER;
+
+
+---- Duplicates from feed3
+COPY (
+    SELECT 
+        'Feed3' AS table_name_source,
+        col_1, col_2, col_3, col_4, col_5,
+        col_6, col_7, col_8, col_9, col_10,
+        col_11, col_12, col_13, col_14, col_15,
+        col_16, col_17, col_18, col_19, col_20,
+        COUNT(*) AS dup_count
+    FROM feed3
+    GROUP BY col_1, col_2, col_3, col_4, col_5,
+             col_6, col_7, col_8, col_9, col_10,
+             col_11, col_12, col_13, col_14, col_15,
+             col_16, col_17, col_18, col_19, col_20
+    HAVING COUNT(*) > 1
+) TO '/tmp/duplicates_feed3.csv' WITH CSV HEADER;
+
+
+
